@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TicTacToeClientSide.Help;
 
 namespace TicTacToeClientSide
 {
@@ -26,11 +29,16 @@ namespace TicTacToeClientSide
             SocketType.Stream, ProtocolType.Tcp);
         private string strarr = "";
         private const int port = 27001;
-        public MainWindow()
+        private UserLogin _UL { get; set; }
+        //public MainWindow()
+        //{
+        //    InitializeComponent();
+        //}
+        public MainWindow(UserLogin UL)
         {
             InitializeComponent();
+            _UL = UL;
         }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ConnectToServer();
@@ -53,10 +61,10 @@ namespace TicTacToeClientSide
             var buffer = new byte[2048];
             int received = ClientSocket.Receive(buffer, SocketFlags.None);
             if (received == 0) return;
-            var data=new byte[received];
+            var data = new byte[received];
             Array.Copy(buffer, data, received);
             string text = Encoding.ASCII.GetString(data);
-          //  MessageBox.Show(text);
+            //  MessageBox.Show(text);
             IntegrateToView(text);
         }
         public bool HasSecondPlayerStart { get; set; } = false;
@@ -65,13 +73,13 @@ namespace TicTacToeClientSide
             App.Current.Dispatcher.Invoke(() =>
             {
                 var data = text.Split('\n');
-               
+
                 var row1 = data[0].Split('\t');
                 var row2 = data[1].Split('\t');
                 var row3 = data[2].Split('\t');
                 var row4 = data[3];
                 //MessageBox.Show(row4);
-                if (data.Length>=5)
+                if (data.Length >= 5)
                 {
                     strarr = data[4];
                     //MessageBox.Show(strarr);
@@ -89,32 +97,31 @@ namespace TicTacToeClientSide
                 b9.Content = row3[2];
                 bool bollen = Convert.ToBoolean(row4);
                 EnabledAllButtons(!bollen);
-                if ( strarr!="")
+                if (strarr != "")
                 {
                     bool bl1 = Convert.ToBoolean(strarr);
-                    Lose_Win ls = new Lose_Win(bl1,this.Title);
+                    Lose_Win ls = new Lose_Win(bl1, this.Title);
                     ClientSocket.Close();
                     ls.Show();
                     this.Close();
-                   
-
                 }
             });
         }
 
         private void ConnectToServer()
         {
-            int attempts = 0;
+            //  int attempts = 0;
+            this.Title = "LOADING...";
             while (!ClientSocket.Connected)
             {
                 try
                 {
-                    ++attempts;
+                    //        ++attempts;
                     ClientSocket.Connect(IPAddress.Loopback, port);
+                    UserWrite();
                 }
-                catch (Exception)
-                {
-                }
+                catch { }
+
             }
 
             MessageBox.Show("Connected");
@@ -140,14 +147,14 @@ namespace TicTacToeClientSide
                 {
                     var bt = sender as Button;
                     var str = bt.Content.ToString();
-                   // MessageBox.Show(str);
+                    // MessageBox.Show(str);
                     if (str != "O" && str != "X")
                     {
                         string request = str + player.Text.Split(' ')[2];
                         SendString(request);
                     }
-                    
-                       // EnabledAllButtons(false);
+
+                    // EnabledAllButtons(false);
                 });
             });
         }
@@ -156,13 +163,24 @@ namespace TicTacToeClientSide
         {
             foreach (var item in myWrap.Children)
             {
-                if(item is Button bt)
-                {
+                if (item is Button bt)
                     bt.IsEnabled = enabled;
-                }
             }
         }
+        private void UserWrite()
+        {
+            try
+            {
+                var cmdJsonStr = JsonSerializer.Serialize(_UL);
+                byte[] buffer = Encoding.ASCII.GetBytes(cmdJsonStr);
+                ClientSocket.Send(buffer);            
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+        }
         private void SendString(string request)
         {
             byte[]buffer=Encoding.ASCII.GetBytes(request);
