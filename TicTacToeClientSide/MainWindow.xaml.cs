@@ -16,29 +16,23 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TicTacToeClientSide.Help;
 
 namespace TicTacToeClientSide
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private static readonly Socket ClientSocket = new Socket(AddressFamily.InterNetwork,
             SocketType.Stream, ProtocolType.Tcp);
+        private bool IsOkay { get; set; } = true;
         private string strarr = "";
         private const int port = 27001;
-        private UserLogin _UL { get; set; }
-        //public MainWindow()
-        //{
-        //    InitializeComponent();
-        //}
-        public MainWindow(UserLogin UL)
+       
+        public MainWindow()
         {
             InitializeComponent();
-            _UL = UL;
         }
+
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ConnectToServer();
@@ -58,14 +52,16 @@ namespace TicTacToeClientSide
 
         private void ReceiveResponse()
         {
-            var buffer = new byte[2048];
-            int received = ClientSocket.Receive(buffer, SocketFlags.None);
-            if (received == 0) return;
-            var data = new byte[received];
-            Array.Copy(buffer, data, received);
-            string text = Encoding.ASCII.GetString(data);
-            //  MessageBox.Show(text);
-            IntegrateToView(text);
+
+                var buffer = new byte[2048];
+                int received = ClientSocket.Receive(buffer, SocketFlags.None);
+                if (received == 0) return;
+                var data = new byte[received];
+                Array.Copy(buffer, data, received);
+                string text = Encoding.ASCII.GetString(data);
+                //  MessageBox.Show(text);
+                IntegrateToView(text);
+            
         }
         public bool HasSecondPlayerStart { get; set; } = false;
         private void IntegrateToView(string text)
@@ -118,7 +114,6 @@ namespace TicTacToeClientSide
                 {
                     //        ++attempts;
                     ClientSocket.Connect(IPAddress.Loopback, port);
-                    UserWrite();
                 }
                 catch { }
 
@@ -165,20 +160,6 @@ namespace TicTacToeClientSide
             {
                 if (item is Button bt)
                     bt.IsEnabled = enabled;
-            }
-        }
-        private void UserWrite()
-        {
-            try
-            {
-                var cmdJsonStr = JsonSerializer.Serialize(_UL);
-                byte[] buffer = Encoding.ASCII.GetBytes(cmdJsonStr);
-                ClientSocket.Send(buffer);            
-            }
-            catch (Exception)
-            {
-
-                throw;
             }
         }
         private void SendString(string request)

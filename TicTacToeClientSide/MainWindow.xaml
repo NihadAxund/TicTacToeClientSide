@@ -9,36 +9,41 @@
     <Grid>
         <StackPanel>
             <TextBlock FontSize="30" Name="player" ></TextBlock>
-            <Button Name="Connect" Click="Button_Click" FontSize="30" >Connect To Server</Button>
-            <WrapPanel Name="myWrap" Width="350" HorizontalAlignment="Center" Orientation="Horizontal" >
-                <Button Click="b1_Click" Name="b1" FontSize="40" Margin="5" Height="100"
+            <Grid>
+                <Button Name="You_img" Margin="10" Width="60" Height="60" HorizontalAlignment="Left" VerticalAlignment="Top" ></Button>
+                <Button Name="Opponent_img" Width="60" Height="60" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" ></Button>
+                <WrapPanel Name="myWrap" Width="350" HorizontalAlignment="Center" Margin="20,10,0,0" Orientation="Horizontal" >
+                    <Button HorizontalAlignment="Center" Margin="45,0,0,0" Name="Connect" Click="Button_Click" FontSize="30" >Connect To Server</Button>
+                    <Button Click="b1_Click" Name="b1" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >1</Button>
-                <Button Click="b1_Click" Name="b2" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b2" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >2</Button>
-                <Button Click="b1_Click" Name="b3" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b3" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >3</Button>
-                <Button Click="b1_Click" Name="b4" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b4" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >4</Button>
-                <Button Click="b1_Click" Name="b5" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b5" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >5</Button>
-                <Button Click="b1_Click" Name="b6" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b6" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >6</Button>
-                <Button Click="b1_Click" Name="b7" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b7" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >7</Button>
-                <Button Click="b1_Click" Name="b8" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b8" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >8</Button>
-                <Button Click="b1_Click" Name="b9" FontSize="40" Margin="5" Height="100"
+                    <Button Click="b1_Click" Name="b9" FontSize="40" Margin="5" Height="100"
                         Width="100"
                         >9</Button>
-            </WrapPanel>
+                </WrapPanel>
+            </Grid>
+            
         </StackPanel>
     </Grid>
 </Window>
